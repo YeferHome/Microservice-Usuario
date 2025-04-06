@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Microservice-Usuario.iml" filepath="$PROJECT_DIR$/.idea/Microservice-Usuario.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Microusuario.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Microusuario.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retoPragma.Microusuario.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retoPragma.Microusuario.main.iml" />
     </modules>
   </component>
 </project>
