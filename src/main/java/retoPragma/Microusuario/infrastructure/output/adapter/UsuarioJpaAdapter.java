@@ -22,4 +22,8 @@ public class UsuarioJpaAdapter implements IUsuarioPersistencePort {
         }
         usuarioRepository.save(usuarioEntityMapper.toUsuarioEntity(usuario));
     }
+    @Override
+    public Usuario findById(Long id) {
+        return usuarioRepository.findById(id).map(usuarioEntityMapper::toUsuario).orElse(null);
+    }
 }
