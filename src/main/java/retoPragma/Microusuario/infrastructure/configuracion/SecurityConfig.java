@@ -21,7 +21,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 new AntPathRequestMatcher("/usuarioApp/save"),
-                                new AntPathRequestMatcher("/restauranteApp/save")
+                                new AntPathRequestMatcher("/restauranteApp/save"),
+                                new AntPathRequestMatcher("/platoApp/save")
                         ).permitAll()
 
                         .anyRequest().authenticated()
