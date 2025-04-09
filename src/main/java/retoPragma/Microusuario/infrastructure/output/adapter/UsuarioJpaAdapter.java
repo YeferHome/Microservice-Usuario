@@ -16,14 +16,25 @@ public class UsuarioJpaAdapter implements IUsuarioPersistencePort {
 
 
     @Override
-    public void savePropietario(Usuario usuario) {
+    public void saveUsuario(Usuario usuario) {
         if (usuarioRepository.findByDocumentoDeIdentidad(usuario.getDocumentoDeIdentidad()).isPresent()) {
             throw new BusinessException("El usuario con este documento ya existe");
         }
         usuarioRepository.save(usuarioEntityMapper.toUsuarioEntity(usuario));
     }
+
     @Override
-    public Usuario findById(Long id) {
-        return usuarioRepository.findById(id).map(usuarioEntityMapper::toUsuario).orElse(null);
+    public String findRolById(Long id) {
+        return usuarioRepository.findById(id)
+                .map(usuarioEntityMapper::toUsuario)
+                .map(usuario -> usuario.getRol().toString())
+                .orElseThrow(() -> new RuntimeException("Usuario con ID " + id + " no encontrado"));
+    }
+
+    @Override
+    public Usuario findByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .map(usuarioEntityMapper::toUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario con correo " + correo + " no encontrado"));
     }
 }

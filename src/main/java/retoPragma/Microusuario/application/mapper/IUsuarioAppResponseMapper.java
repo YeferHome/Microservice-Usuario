@@ -9,5 +9,6 @@ import retoPragma.Microusuario.domain.model.Usuario;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IUsuarioAppResponseMapper {
+
     UsuarioResponseDto toUsuarioResponseDto(Usuario usuario);
 }

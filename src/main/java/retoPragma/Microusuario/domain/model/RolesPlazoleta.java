@@ -1,5 +1,5 @@
 package retoPragma.Microusuario.domain.model;
 
 public enum RolesPlazoleta {
-    PROPIETARIO
+    PROPIETARIO, ADMINISTRADOR, EMPLEADO, CLIENTE
 }
