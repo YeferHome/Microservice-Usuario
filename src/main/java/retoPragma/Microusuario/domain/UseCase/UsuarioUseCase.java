@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
 import retoPragma.Microusuario.domain.exception.*;
+import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.model.Usuario;
 import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
 
@@ -67,6 +68,9 @@ public class UsuarioUseCase implements IUsuarioServicePort {
 
     @Override
     public void saveRegister(Usuario usuario) {
+        if (usuario.getRol() != RolesPlazoleta.CLIENTE) {
+            throw new NoPermissionCreateException();
+        }
         validarYGuardarUsuario(usuario);
     }
 
