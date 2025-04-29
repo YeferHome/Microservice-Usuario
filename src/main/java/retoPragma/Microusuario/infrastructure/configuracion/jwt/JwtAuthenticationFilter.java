@@ -37,8 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 String correo = jwtService.extractCorreo(token);
                 String role = jwtService.extractRol(token);
+                Long idUsuarioid = jwtService.extractIdUsuario(token);
 
-                if (correo != null && role != null) {
+                if (correo != null && role != null && idUsuarioid != null) {
 
                     List<GrantedAuthority> authorities = Collections.singletonList(
                             new SimpleGrantedAuthority("ROLE_" + role)

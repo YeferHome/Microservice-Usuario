@@ -25,6 +25,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(usuario.getCorreo())
                 .claim("rol", usuario.getRol())
+                .claim("id",usuario.getId())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
@@ -41,6 +42,9 @@ public class JwtService {
 
     public boolean isTokenValid(String token, Usuario usuario) {
         return extractCorreo(token).equals(usuario.getCorreo()) && !isTokenExpired(token);
+    }
+    public Long extractIdUsuario(String token) {
+        return extractClaim(token, claims -> claims.get("idUsuario", Long.class));
     }
 
     private boolean isTokenExpired(String token) {

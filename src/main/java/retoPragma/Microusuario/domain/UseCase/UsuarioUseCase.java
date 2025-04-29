@@ -90,7 +90,7 @@ public class UsuarioUseCase implements IUsuarioServicePort {
         guardarUsuarioConClaveEncriptada(empleado);
     }
 
-    // ================== Métodos Auxiliares ==================
+
 
     private void validarYGuardarUsuario(Usuario usuario) {
         realizarValidacionesGenerales(usuario);
