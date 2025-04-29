@@ -11,7 +11,8 @@ public class IUsuarioEntityMapper {
         if (usuario == null) {
             return null;
         }
-       UsuarioEntity entity = new UsuarioEntity();
+
+        UsuarioEntity entity = new UsuarioEntity();
         entity.setId(usuario.getId());
         entity.setNombre(usuario.getNombre());
         entity.setApellido(usuario.getApellido());

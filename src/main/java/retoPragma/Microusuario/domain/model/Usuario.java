@@ -1,4 +1,5 @@
 package retoPragma.Microusuario.domain.model;
+
 import java.time.LocalDate;
 
 public class Usuario {
@@ -68,9 +69,13 @@ public class Usuario {
         this.celular = celular;
     }
 
-    public LocalDate getFechaNacimiento() {return fechaNacimiento;}
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {this.fechaNacimiento = fechaNacimiento;}
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
 
     public String getCorreo() {
         return correo;

@@ -7,4 +7,5 @@ public interface IUsuarioServicePort {
     void saveUsuario(Usuario usuario);
     String findRolById(long id);
     Usuario findUsuarioByCorreo(String correo);
+    void saveRegister(Usuario usuario);
 }

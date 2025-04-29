@@ -1,7 +1,5 @@
 package retoPragma.Microusuario.application.dto;
 
-
-
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 
 import java.time.LocalDateTime;

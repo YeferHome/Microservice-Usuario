@@ -4,13 +4,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
+import retoPragma.Microusuario.domain.exception.*;
 import retoPragma.Microusuario.domain.model.Usuario;
-import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
-import retoPragma.Microusuario.infrastructure.exception.BusinessException;
 
 import java.time.LocalDate;
 import java.time.Period;
+
+import static retoPragma.Microusuario.domain.constants.RegexConstants.CELULAR_REGEX;
+import static retoPragma.Microusuario.domain.constants.RegexConstants.CORREO_REGEX;
+import static retoPragma.Microusuario.domain.constants.RolesConstantes.ROLE_ADMINISTRADOR;
+import static retoPragma.Microusuario.domain.constants.RolesConstantes.ROLE_PROPIETARIO;
+import static retoPragma.Microusuario.domain.constants.UsuarioConstants.DOCUMENTO_POSITIVO;
+import static retoPragma.Microusuario.domain.constants.UsuarioConstants.Edad_MINIMA;
+import static retoPragma.Microusuario.domain.model.RolesPlazoleta.ADMINISTRADOR;
+import static retoPragma.Microusuario.domain.model.RolesPlazoleta.EMPLEADO;
 
 public class UsuarioUseCase implements IUsuarioServicePort {
 
@@ -22,29 +30,29 @@ public class UsuarioUseCase implements IUsuarioServicePort {
 
     @Override
     public void saveUsuario(Usuario usuario) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated() || auth.getAuthorities().isEmpty()) {
-            throw new BusinessException("No estás autenticado, no se puede crear un usuario.");
-        }
-
-        String authority = auth.getAuthorities().iterator().next().getAuthority();
-
-        if ("ROLE_ADMINISTRADOR".equals(authority)) {
-            realizarValidacionesGenerales(usuario);
-            usuario.setClave(new BCryptPasswordEncoder().encode(usuario.getClave()));
-            usuarioPersistencePort.saveUsuario(usuario);
+        if (usuario.getRol() == ADMINISTRADOR && isFirstAdmin()) {
+            validarYGuardarUsuario(usuario);
             return;
         }
 
-        if ("ROLE_PROPIETARIO".equals(authority) && usuario.getRol() == RolesPlazoleta.EMPLEADO) {
-            Long idPropietario = usuarioPersistencePort.findByCorreo(auth.getName()).getId();
-            crearEmpleadoPorPropietario(usuario, idPropietario);
-            return;
-        }
+        Authentication auth = obtenerAutenticacion();
+        String authority = obtenerAutoridad(auth);
 
-        throw new BusinessException("No tienes permisos para crear este tipo de usuario.");
+        switch (authority) {
+            case ROLE_ADMINISTRADOR:
+                validarYGuardarUsuario(usuario);
+                break;
+            case ROLE_PROPIETARIO:
+                if (usuario.getRol() == EMPLEADO) {
+                    Long idPropietario = usuarioPersistencePort.findByCorreo(auth.getName()).getId();
+                    crearEmpleadoPorPropietario(usuario, idPropietario);
+                } else {
+                    throw new NoPermissionCreateException();
+                }
+                break;
+            default:
+                throw new NoPermissionCreateException();
+        }
     }
 
     @Override
@@ -57,77 +65,90 @@ public class UsuarioUseCase implements IUsuarioServicePort {
         return usuarioPersistencePort.findByCorreo(correo);
     }
 
+    @Override
+    public void saveRegister(Usuario usuario) {
+        validarYGuardarUsuario(usuario);
+    }
 
     public void crearEmpleadoPorPropietario(Usuario empleado, Long idPropietario) {
+        Authentication auth = obtenerAutenticacion();
+        String authority = obtenerAutoridad(auth);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated() || auth.getAuthorities().isEmpty()) {
-            throw new BusinessException("Debes estar autenticado para crear empleados.");
-        }
-
-
-        String authority = auth.getAuthorities().iterator().next().getAuthority();
-
-        if (!"ROLE_PROPIETARIO".equals(authority)) {
-            throw new BusinessException("Solo un propietario puede crear empleados.");
+        if (!ROLE_PROPIETARIO.equals(authority)) {
+            throw new UserNoOwnerException();
         }
 
         String correoAutenticado = auth.getName();
         Usuario propietario = usuarioPersistencePort.findByCorreo(correoAutenticado);
+
         if (propietario == null || !propietario.getId().equals(idPropietario)) {
-            throw new BusinessException("El usuario autenticado no coincide con el propietario indicado.");
+            throw new AuthNoOwnerException();
         }
 
-
-        empleado.setRol(RolesPlazoleta.EMPLEADO);
-
+        empleado.setRol(EMPLEADO);
         validarCamposEmpleado(empleado);
+        guardarUsuarioConClaveEncriptada(empleado);
+    }
 
-        empleado.setClave(new BCryptPasswordEncoder().encode(empleado.getClave()));
+    // ================== Métodos Auxiliares ==================
 
-        usuarioPersistencePort.saveUsuario(empleado);
+    private void validarYGuardarUsuario(Usuario usuario) {
+        realizarValidacionesGenerales(usuario);
+        guardarUsuarioConClaveEncriptada(usuario);
+    }
+
+    private void guardarUsuarioConClaveEncriptada(Usuario usuario) {
+        usuario.setClave(new BCryptPasswordEncoder().encode(usuario.getClave()));
+        usuarioPersistencePort.saveUsuario(usuario);
+    }
+
+    private Authentication obtenerAutenticacion() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getAuthorities().isEmpty()) {
+            throw new NoAuthUserException();
+        }
+        return auth;
+    }
+
+    private String obtenerAutoridad(Authentication auth) {
+        return auth.getAuthorities().iterator().next().getAuthority();
+    }
+
+    private boolean isFirstAdmin() {
+        return usuarioPersistencePort.findByRol(ADMINISTRADOR) == null;
     }
 
     private void realizarValidacionesGenerales(Usuario usuario) {
         if (!esCorreoValido(usuario.getCorreo())) {
-            throw new BusinessException("Correo no válido, revise la estructura (ej. usuario@dominio.com)");
+            throw new CorreoInvadedException();
         }
-
         if (!esCelularValido(usuario.getCelular())) {
-            throw new BusinessException("Teléfono inválido; máximo 13 dígitos y debe iniciar con '+'.");
+            throw new PhoneInvalidException();
         }
-
-        if (usuario.getDocumentoDeIdentidad() == null || usuario.getDocumentoDeIdentidad() <= 0) {
-            throw new BusinessException("Documento de identidad debe ser un número positivo.");
+        if (usuario.getDocumentoDeIdentidad() == null || usuario.getDocumentoDeIdentidad() <= DOCUMENTO_POSITIVO) {
+            throw new DocumentException();
         }
-
         if (!esMayorDeEdad(usuario.getFechaNacimiento())) {
-            throw new BusinessException("El usuario debe ser mayor de 18 años.");
+            throw new AgeException();
         }
     }
 
     private void validarCamposEmpleado(Usuario usuario) {
         if (usuario.getNombre() == null || usuario.getApellido() == null) {
-            throw new BusinessException("Nombre y Apellido obligatorios.");
+            throw new FullNameException();
         }
         realizarValidacionesGenerales(usuario);
     }
 
     private boolean esCorreoValido(String correo) {
-        if (correo == null) return false;
-        return correo.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+        return correo != null && correo.matches(CORREO_REGEX);
     }
 
     private boolean esCelularValido(String celular) {
-        if (celular == null) return false;
-
-        return celular.matches("^\\+[1-9]{1,3}\\d{10}$");
+        return celular != null && celular.matches(CELULAR_REGEX);
     }
 
     private boolean esMayorDeEdad(LocalDate fechaNacimiento) {
-        if (fechaNacimiento == null) return false;
-
-        return Period.between(fechaNacimiento, LocalDate.now()).getYears() >= 18;
+        return fechaNacimiento != null && Period.between(fechaNacimiento, LocalDate.now()).getYears() >= Edad_MINIMA;
     }
 }

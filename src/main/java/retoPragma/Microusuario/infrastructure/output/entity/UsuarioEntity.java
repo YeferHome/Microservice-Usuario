@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Setter
 public class UsuarioEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -19,12 +19,6 @@ public class  UsuarioAppHandler implements IUsuarioAppHandler {
     @Override
     public void saveUsuarioInUsuarioApp(UsuarioAppRequestDto usuarioAppRequestDto) {
         Usuario usuario = usuarioAppRequestMapper.toUsuario(usuarioAppRequestDto);
-     /*   if (usuario.getRol() == RolesPlazoleta.EMPLEADO) {
-            usuario.setNombre(usuarioAppRequestDto.getNombre());
-            usuario.setApellido(usuarioAppRequestDto.getApellido());
-            usuario.setDocumentoDeIdentidad(usuarioAppRequestDto.getDocumentoDeIdentidad());
-            usuario.setCelular(usuarioAppRequestDto.getCelular());
-        } */
         usuarioServicePort.saveUsuario(usuario);
     }
 

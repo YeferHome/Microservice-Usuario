@@ -10,7 +10,7 @@ import retoPragma.Microusuario.application.mapper.IUsuarioAppRequestMapper;
 import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
 import retoPragma.Microusuario.domain.model.Usuario;
 import retoPragma.Microusuario.infrastructure.configuracion.jwt.JwtService;
-import retoPragma.Microusuario.infrastructure.exception.BusinessException;
+import retoPragma.Microusuario.domain.exception.BusinessException;
 
 @Service
 @AllArgsConstructor
@@ -31,23 +31,17 @@ public class AuthAppHandler implements IAuthAppHandler {
         if (!passwordEncoder.matches(loginRequestDto.getClave(), usuario.getClave())) {
             throw new BusinessException("Contraseña incorrecta");
         }
-
         String jwtToken = jwtService.generate(usuario);
 
         return new LoginResponseDto(jwtToken);    }
 
+
     @Override
     public void register(RegisterRequestDto registerRequestDto) {
-        Usuario usuario = new Usuario();
-        usuario.setNombre(registerRequestDto.getNombre());
-        usuario.setApellido(registerRequestDto.getApellido());
-        usuario.setDocumentoDeIdentidad(registerRequestDto.getDocumentoDeIdentidad());
-        usuario.setCelular(registerRequestDto.getCelular());
-        usuario.setFechaNacimiento(registerRequestDto.getFechaNacimiento());
-        usuario.setCorreo(registerRequestDto.getCorreo());
+        Usuario usuario = usuarioAppRequestMapper.toRegister(registerRequestDto);
         usuario.setClave(passwordEncoder.encode(registerRequestDto.getClave()));
-        usuario.setRol(registerRequestDto.getRol());
-
-        usuarioServicePort.saveUsuario(usuario);
+        usuarioServicePort.saveRegister(usuario);
     }
+
 }
+

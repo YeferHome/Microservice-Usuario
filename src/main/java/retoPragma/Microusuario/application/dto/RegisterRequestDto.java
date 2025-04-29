@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 
+
 import java.time.LocalDate;
 
 @Getter

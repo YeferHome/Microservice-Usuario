@@ -1,4 +1,4 @@
-package retoPragma.Microusuario.infrastructure.exception;
+package retoPragma.Microusuario.domain.exception;
 
 public class BusinessException extends RuntimeException {
     public BusinessException(String message) {
