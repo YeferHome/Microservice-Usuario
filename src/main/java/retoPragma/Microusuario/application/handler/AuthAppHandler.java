@@ -8,9 +8,10 @@ import retoPragma.Microusuario.application.dto.LoginRequestDto;
 import retoPragma.Microusuario.application.dto.LoginResponseDto;
 import retoPragma.Microusuario.application.mapper.IUsuarioAppRequestMapper;
 import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
+import retoPragma.Microusuario.domain.exception.PasswordErrorException;
 import retoPragma.Microusuario.domain.model.Usuario;
 import retoPragma.Microusuario.infrastructure.configuracion.jwt.JwtService;
-import retoPragma.Microusuario.domain.exception.BusinessException;
+
 
 @Service
 @AllArgsConstructor
@@ -29,7 +30,7 @@ public class AuthAppHandler implements IAuthAppHandler {
         Usuario usuario = usuarioServicePort.findUsuarioByCorreo(loginRequestDto.getCorreo());
 
         if (!passwordEncoder.matches(loginRequestDto.getClave(), usuario.getClave())) {
-            throw new BusinessException("Contraseña incorrecta");
+            throw new PasswordErrorException();
         }
         String jwtToken = jwtService.generate(usuario);
 
@@ -39,7 +40,6 @@ public class AuthAppHandler implements IAuthAppHandler {
     @Override
     public void register(RegisterRequestDto registerRequestDto) {
         Usuario usuario = usuarioAppRequestMapper.toRegister(registerRequestDto);
-        usuario.setClave(passwordEncoder.encode(registerRequestDto.getClave()));
         usuarioServicePort.saveRegister(usuario);
     }
 

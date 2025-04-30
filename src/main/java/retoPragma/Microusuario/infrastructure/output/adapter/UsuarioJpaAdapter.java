@@ -2,6 +2,7 @@ package retoPragma.Microusuario.infrastructure.output.adapter;
 
 import lombok.RequiredArgsConstructor;
 
+import retoPragma.Microusuario.domain.exception.DocumentNoExistException;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.model.Usuario;
 import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
@@ -15,12 +16,13 @@ public class UsuarioJpaAdapter implements IUsuarioPersistencePort {
 
     private final IUsuarioRepository usuarioRepository;
     private final IUsuarioEntityMapper usuarioEntityMapper;
-
     @Override
     public void saveUsuario(Usuario usuario) {
+        if (usuarioRepository.findByDocumentoDeIdentidad(usuario.getDocumentoDeIdentidad()).isPresent()) {
+            throw new DocumentNoExistException();
+        }
         usuarioRepository.save(usuarioEntityMapper.toUsuarioEntity(usuario));
     }
-
     @Override
     public String findRolById(Long id) {
         return usuarioRepository.findById(id)
