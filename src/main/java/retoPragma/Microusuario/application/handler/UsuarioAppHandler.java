@@ -23,6 +23,19 @@ public class  UsuarioAppHandler implements IUsuarioAppHandler {
     }
 
     @Override
+    public void savePropietarioInUsuarioApp(UsuarioAppRequestDto usuarioAppRequestDto){
+        Usuario propietario =  usuarioAppRequestMapper.toUsuario(usuarioAppRequestDto);
+        usuarioServicePort.saveUsuario(propietario);
+    }
+
+    @Override
+    public void saveEmpleadoInUsuarioApp (UsuarioAppRequestDto usuarioAppRequestDto){
+        Usuario empleado =  usuarioAppRequestMapper.toUsuario(usuarioAppRequestDto);
+        usuarioServicePort.saveUsuario(empleado);
+    }
+
+
+    @Override
     public String findRolById(Long id) {
         return usuarioServicePort.findRolById(id);
     }
