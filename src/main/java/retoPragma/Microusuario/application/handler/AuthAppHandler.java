@@ -34,7 +34,8 @@ public class AuthAppHandler implements IAuthAppHandler {
         }
         String jwtToken = jwtService.generate(usuario);
 
-        return new LoginResponseDto(jwtToken);    }
+        return new LoginResponseDto(jwtToken);
+    }
 
 
     @Override
