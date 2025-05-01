@@ -15,13 +15,13 @@ public class UsuarioAppRestController {
 
     private final IUsuarioAppHandler usuarioAppHandler;
 
-    @PostMapping("/saveAdministrador")
+    @PostMapping("/saveAdmin")
     public ResponseEntity<Void> saveUsuarioInUsuarioApp(@RequestBody UsuarioAppRequestDto usuarioAppRequestDto){
         usuarioAppHandler.saveUsuarioInUsuarioApp(usuarioAppRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/savePropietario")
+    @PostMapping("/saveOwner")
     public ResponseEntity<Void> savePropietarioInUsuarioApp(@RequestBody UsuarioAppRequestDto usuarioAppRequestDto){
         usuarioAppHandler.savePropietarioInUsuarioApp(usuarioAppRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -30,8 +30,7 @@ public class UsuarioAppRestController {
     @PostMapping("/saveEmpleado")
     public ResponseEntity<Void>saveEmpleadoInUsuarioApp (@RequestBody UsuarioAppRequestDto usuarioAppRequestDto){
         usuarioAppHandler.saveEmpleadoInUsuarioApp(usuarioAppRequestDto);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).build();}
 
     @GetMapping("/{id}/rol")
     String obtenerRolUsuario(@PathVariable("id") Long id){
