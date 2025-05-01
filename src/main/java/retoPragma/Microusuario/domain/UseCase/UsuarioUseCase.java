@@ -1,12 +1,11 @@
 package retoPragma.Microusuario.domain.UseCase;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
 import retoPragma.Microusuario.domain.exception.*;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.model.Usuario;
+import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
 import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
 
 import java.time.LocalDate;
@@ -21,12 +20,16 @@ import static retoPragma.Microusuario.domain.constants.UsuarioConstants.Edad_MIN
 import static retoPragma.Microusuario.domain.model.RolesPlazoleta.ADMINISTRADOR;
 import static retoPragma.Microusuario.domain.model.RolesPlazoleta.EMPLEADO;
 
+
 public class UsuarioUseCase implements IUsuarioServicePort {
 
     private final IUsuarioPersistencePort usuarioPersistencePort;
+    private final ISecurityServicePort securityServicePort;
 
-    public UsuarioUseCase(IUsuarioPersistencePort usuarioPersistencePort) {
+    public UsuarioUseCase(IUsuarioPersistencePort usuarioPersistencePort,
+                          ISecurityServicePort securityServicePort) {
         this.usuarioPersistencePort = usuarioPersistencePort;
+        this.securityServicePort = securityServicePort;
     }
 
     @Override
@@ -36,8 +39,7 @@ public class UsuarioUseCase implements IUsuarioServicePort {
             return;
         }
 
-        Authentication auth = obtenerAutenticacion();
-        String authority = obtenerAutoridad(auth);
+        String authority = securityServicePort.getAuthenticatedAuthority();
 
         switch (authority) {
             case ROLE_ADMINISTRADOR:
@@ -45,7 +47,7 @@ public class UsuarioUseCase implements IUsuarioServicePort {
                 break;
             case ROLE_PROPIETARIO:
                 if (usuario.getRol() == EMPLEADO) {
-                    Long idPropietario = usuarioPersistencePort.findByCorreo(auth.getName()).getId();
+                    Long idPropietario = usuarioPersistencePort.findByCorreo(securityServicePort.getAuthenticatedUsername()).getId();
                     crearEmpleadoPorPropietario(usuario, idPropietario);
                 } else {
                     throw new NoPermissionCreateException();
@@ -75,14 +77,13 @@ public class UsuarioUseCase implements IUsuarioServicePort {
     }
 
     public void crearEmpleadoPorPropietario(Usuario empleado, Long idPropietario) {
-        Authentication auth = obtenerAutenticacion();
-        String authority = obtenerAutoridad(auth);
+        String authority = securityServicePort.getAuthenticatedAuthority();
 
         if (!ROLE_PROPIETARIO.equals(authority)) {
             throw new UserNoOwnerException();
         }
 
-        String correoAutenticado = auth.getName();
+        String correoAutenticado = securityServicePort.getAuthenticatedUsername();
         Usuario propietario = usuarioPersistencePort.findByCorreo(correoAutenticado);
 
         if (propietario == null || !propietario.getId().equals(idPropietario)) {
@@ -94,28 +95,14 @@ public class UsuarioUseCase implements IUsuarioServicePort {
         guardarUsuarioConClaveEncriptada(empleado);
     }
 
-
-
     private void validarYGuardarUsuario(Usuario usuario) {
         realizarValidacionesGenerales(usuario);
         guardarUsuarioConClaveEncriptada(usuario);
     }
 
     private void guardarUsuarioConClaveEncriptada(Usuario usuario) {
-        usuario.setClave(new BCryptPasswordEncoder().encode(usuario.getClave()));
+        usuario.setClave(securityServicePort.encodePassword(usuario.getClave()));
         usuarioPersistencePort.saveUsuario(usuario);
-    }
-
-    private Authentication obtenerAutenticacion() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getAuthorities().isEmpty()) {
-            throw new NoAuthUserException();
-        }
-        return auth;
-    }
-
-    private String obtenerAutoridad(Authentication auth) {
-        return auth.getAuthorities().iterator().next().getAuthority();
     }
 
     private boolean isFirstAdmin() {
