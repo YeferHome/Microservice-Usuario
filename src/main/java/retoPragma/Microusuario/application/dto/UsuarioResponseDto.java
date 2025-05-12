@@ -13,4 +13,5 @@ public class UsuarioResponseDto {
     private String correo;
     private String clave;
     private RolesPlazoleta rol;
+    private Long idRestaurante;
 }

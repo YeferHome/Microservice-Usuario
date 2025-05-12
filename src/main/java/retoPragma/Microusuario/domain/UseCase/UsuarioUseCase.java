@@ -5,6 +5,7 @@ import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
 import retoPragma.Microusuario.domain.exception.*;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.model.Usuario;
+import retoPragma.Microusuario.domain.spi.IPlazoletaServicePort;
 import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
 import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
 
@@ -13,8 +14,7 @@ import java.time.Period;
 
 import static retoPragma.Microusuario.domain.constants.RegexConstants.CELULAR_REGEX;
 import static retoPragma.Microusuario.domain.constants.RegexConstants.CORREO_REGEX;
-import static retoPragma.Microusuario.domain.constants.RolesConstantes.ROLE_ADMINISTRADOR;
-import static retoPragma.Microusuario.domain.constants.RolesConstantes.ROLE_PROPIETARIO;
+import static retoPragma.Microusuario.domain.constants.RolesConstantes.*;
 import static retoPragma.Microusuario.domain.constants.UsuarioConstants.DOCUMENTO_POSITIVO;
 import static retoPragma.Microusuario.domain.constants.UsuarioConstants.Edad_MINIMA;
 import static retoPragma.Microusuario.domain.model.RolesPlazoleta.ADMINISTRADOR;
@@ -25,12 +25,14 @@ public class UsuarioUseCase implements IUsuarioServicePort {
 
     private final IUsuarioPersistencePort usuarioPersistencePort;
     private final ISecurityServicePort securityServicePort;
+    private final IPlazoletaServicePort plazoletaFeignClient;
 
-    public UsuarioUseCase(IUsuarioPersistencePort usuarioPersistencePort,
-                          ISecurityServicePort securityServicePort) {
+    public UsuarioUseCase(IUsuarioPersistencePort usuarioPersistencePort, ISecurityServicePort securityServicePort, IPlazoletaServicePort plazoletaFeignClient) {
         this.usuarioPersistencePort = usuarioPersistencePort;
         this.securityServicePort = securityServicePort;
+        this.plazoletaFeignClient = plazoletaFeignClient;
     }
+
 
     @Override
     public void saveUsuario(Usuario usuario) {
@@ -77,12 +79,14 @@ public class UsuarioUseCase implements IUsuarioServicePort {
     }
 
     public void crearEmpleadoPorPropietario(Usuario empleado, Long idPropietario) {
-        String authority = securityServicePort.getAuthenticatedAuthority();
 
+        String authority = securityServicePort.getAuthenticatedAuthority();
         if (!ROLE_PROPIETARIO.equals(authority)) {
             throw new UserNoOwnerException();
         }
-
+        if (plazoletaFeignClient.obtenerRestaurateId(empleado.getIdRestaurante()) == null) {
+            throw new NoPermissionCreateException();
+        }
         String correoAutenticado = securityServicePort.getAuthenticatedUsername();
         Usuario propietario = usuarioPersistencePort.findByCorreo(correoAutenticado);
 

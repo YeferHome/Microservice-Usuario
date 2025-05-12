@@ -22,6 +22,7 @@ public class IUsuarioEntityMapper {
         entity.setCorreo(usuario.getCorreo());
         entity.setClave(usuario.getClave());
         entity.setRol(usuario.getRol());
+        entity.setIdRestaurante(usuario.getIdRestaurante());
 
         return entity;
     }
@@ -40,7 +41,8 @@ public class IUsuarioEntityMapper {
                 entity.getFechaNacimiento(),
                 entity.getCorreo(),
                 entity.getClave(),
-                entity.getRol()
+                entity.getRol(),
+                entity.getIdRestaurante()
         );
     }
 }

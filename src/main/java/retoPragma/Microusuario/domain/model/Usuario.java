@@ -13,11 +13,13 @@ public class Usuario {
     private String correo;
     private String clave;
     private RolesPlazoleta rol;
+    private Long idRestaurante;
+
 
     public Usuario() {
     }
 
-    public Usuario(Long id, String nombre, String apellido, Long documentoDeIdentidad, String celular, LocalDate fechaNacimiento, String correo, String clave, RolesPlazoleta rol) {
+    public Usuario(Long id, String nombre, String apellido, Long documentoDeIdentidad, String celular, LocalDate fechaNacimiento, String correo, String clave, RolesPlazoleta rol, Long idRestaurante) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -27,6 +29,7 @@ public class Usuario {
         this.correo = correo;
         this.clave = clave;
         this.rol = rol;
+        this.idRestaurante = idRestaurante;
     }
 
     public Long getId() {
@@ -99,5 +102,13 @@ public class Usuario {
 
     public void setRol(RolesPlazoleta rol) {
         this.rol = rol;
+    }
+
+    public Long getIdRestaurante() {
+        return idRestaurante;
+    }
+
+    public void setIdRestaurante(Long idRestaurante) {
+        this.idRestaurante = idRestaurante;
     }
 }

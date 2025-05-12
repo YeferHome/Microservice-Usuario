@@ -44,7 +44,7 @@ public class JwtService {
         return extractCorreo(token).equals(usuario.getCorreo()) && !isTokenExpired(token);
     }
     public Long extractIdUsuario(String token) {
-        return extractClaim(token, claims -> claims.get("idUsuario", Long.class));
+        return extractClaim(token, claims -> claims.get("id", Long.class));
     }
 
     private boolean isTokenExpired(String token) {
