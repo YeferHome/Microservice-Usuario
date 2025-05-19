@@ -19,7 +19,6 @@ public class AuthController {
 
     private final IAuthAppHandler authAppHandler;
 
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
         return ResponseEntity.ok(authAppHandler.login(loginRequest));

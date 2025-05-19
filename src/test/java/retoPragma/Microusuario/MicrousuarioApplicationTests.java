@@ -9,5 +9,4 @@ class MicrousuarioApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

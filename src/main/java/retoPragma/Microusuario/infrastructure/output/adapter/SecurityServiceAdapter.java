@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import retoPragma.Microusuario.domain.exception.NoAuthUserException;
+import retoPragma.Microusuario.domain.util.exception.NoAuthUserException;
 import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
 
 @Component

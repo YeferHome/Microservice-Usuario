@@ -5,27 +5,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import retoPragma.Microusuario.domain.UseCase.UsuarioUseCase;
-import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
-import retoPragma.Microusuario.domain.spi.IUsuarioPersistencePort;
+import retoPragma.Microusuario.domain.UseCase.UserUseCase;
+import retoPragma.Microusuario.domain.api.IUserServicePort;
+import retoPragma.Microusuario.domain.spi.IUserPersistencePort;
 import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
-import retoPragma.Microusuario.domain.spi.IPlazoletaServicePort;
-import retoPragma.Microusuario.infrastructure.output.adapter.UsuarioJpaAdapter;
+import retoPragma.Microusuario.domain.spi.ISmallSquareServicePort;
+import retoPragma.Microusuario.infrastructure.output.adapter.UserJpaAdapter;
 import retoPragma.Microusuario.infrastructure.output.adapter.SecurityServiceAdapter;
-import retoPragma.Microusuario.infrastructure.output.mapper.IUsuarioEntityMapper;
-import retoPragma.Microusuario.infrastructure.output.repository.IUsuarioRepository;
+import retoPragma.Microusuario.infrastructure.output.mapper.IUserEntityMapper;
+import retoPragma.Microusuario.infrastructure.output.repository.IUserRepository;
 
 @Configuration
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
-    private final IUsuarioRepository usuarioRepository;
-    private final IUsuarioEntityMapper usuarioEntityMapper;
-    private final IPlazoletaServicePort plazoletaFeignClient;
+    private final IUserRepository usuarioRepository;
+    private final IUserEntityMapper usuarioEntityMapper;
+    private final ISmallSquareServicePort plazoletaFeignClient;
 
     @Bean
-    public IUsuarioPersistencePort usuarioPersistencePort() {
-        return new UsuarioJpaAdapter(usuarioRepository, usuarioEntityMapper);
+    public IUserPersistencePort usuarioPersistencePort() {
+        return new UserJpaAdapter(usuarioRepository, usuarioEntityMapper);
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IUsuarioServicePort usuarioServicePort() {
-        return new UsuarioUseCase(usuarioPersistencePort(), securityServicePort(), plazoletaFeignClient);
+    public IUserServicePort usuarioServicePort() {
+        return new UserUseCase(usuarioPersistencePort(), securityServicePort(), plazoletaFeignClient);
     }
 }

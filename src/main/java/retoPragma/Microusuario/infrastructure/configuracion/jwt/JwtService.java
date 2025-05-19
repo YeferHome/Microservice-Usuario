@@ -6,7 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import retoPragma.Microusuario.domain.model.Usuario;
+import retoPragma.Microusuario.domain.model.User;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -21,11 +21,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generate(Usuario usuario) {
+    public String generate(User user) {
         return Jwts.builder()
-                .subject(usuario.getCorreo())
-                .claim("rol", usuario.getRol())
-                .claim("id",usuario.getId())
+                .subject(user.getEmail())
+                .claim("rol", user.getRol())
+                .claim("id", user.getId())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
@@ -40,8 +40,8 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("rol", String.class));
     }
 
-    public boolean isTokenValid(String token, Usuario usuario) {
-        return extractCorreo(token).equals(usuario.getCorreo()) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, User user) {
+        return extractCorreo(token).equals(user.getEmail()) && !isTokenExpired(token);
     }
     public Long extractIdUsuario(String token) {
         return extractClaim(token, claims -> claims.get("id", Long.class));

@@ -6,10 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import retoPragma.Microusuario.application.dto.LoginRequestDto;
 import retoPragma.Microusuario.application.dto.LoginResponseDto;
-import retoPragma.Microusuario.application.mapper.IUsuarioAppRequestMapper;
-import retoPragma.Microusuario.domain.api.IUsuarioServicePort;
-import retoPragma.Microusuario.domain.exception.PasswordErrorException;
-import retoPragma.Microusuario.domain.model.Usuario;
+import retoPragma.Microusuario.application.mapper.IUserAppRequestMapper;
+import retoPragma.Microusuario.domain.api.IUserServicePort;
+import retoPragma.Microusuario.domain.model.User;
+import retoPragma.Microusuario.domain.util.exception.PasswordErrorException;
 import retoPragma.Microusuario.infrastructure.configuracion.jwt.JwtService;
 
 
@@ -17,31 +17,27 @@ import retoPragma.Microusuario.infrastructure.configuracion.jwt.JwtService;
 @AllArgsConstructor
 public class AuthAppHandler implements IAuthAppHandler {
 
-    private final IUsuarioServicePort usuarioServicePort;
-    private final IUsuarioAppRequestMapper usuarioAppRequestMapper;
+    private final IUserServicePort userServicePort;
+    private final IUserAppRequestMapper userAppRequestMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-
-
-
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-        Usuario usuario = usuarioServicePort.findUsuarioByCorreo(loginRequestDto.getCorreo());
+        User user = userServicePort.findUserByEmail(loginRequestDto.getCorreo());
 
-        if (!passwordEncoder.matches(loginRequestDto.getClave(), usuario.getClave())) {
+        if (!passwordEncoder.matches(loginRequestDto.getClave(), user.getClave())) {
             throw new PasswordErrorException();
         }
-        String jwtToken = jwtService.generate(usuario);
+        String jwtToken = jwtService.generate(user);
 
         return new LoginResponseDto(jwtToken);
     }
 
-
     @Override
     public void register(RegisterRequestDto registerRequestDto) {
-        Usuario usuario = usuarioAppRequestMapper.toRegister(registerRequestDto);
-        usuarioServicePort.saveRegister(usuario);
+        User user = userAppRequestMapper.toRegister(registerRequestDto);
+        userServicePort.saveRegister(user);
     }
 
 }
