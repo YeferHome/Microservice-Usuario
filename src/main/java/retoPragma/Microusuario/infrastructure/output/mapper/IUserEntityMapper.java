@@ -15,7 +15,7 @@ public class IUserEntityMapper {
         UserEntity entity = new UserEntity();
         entity.setId(user.getId());
         entity.setName(user.getName());
-        entity.setLastname(user.getLastName());
+        entity.setLastName(user.getLastName());
         entity.setIdentificationNumber(user.getIdentificationNumber());
         entity.setNumberPhone(user.getNumberPhone());
         entity.setDateOfBirth(user.getDateOfBirth());
@@ -35,7 +35,7 @@ public class IUserEntityMapper {
         return new User(
                 entity.getId(),
                 entity.getName(),
-                entity.getLastname(),
+                entity.getLastName(),
                 entity.getIdentificationNumber(),
                 entity.getNumberPhone(),
                 entity.getDateOfBirth(),

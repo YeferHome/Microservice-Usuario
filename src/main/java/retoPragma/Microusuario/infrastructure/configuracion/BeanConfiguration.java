@@ -9,7 +9,7 @@ import retoPragma.Microusuario.domain.UseCase.UserUseCase;
 import retoPragma.Microusuario.domain.api.IUserServicePort;
 import retoPragma.Microusuario.domain.spi.IUserPersistencePort;
 import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
-import retoPragma.Microusuario.domain.spi.ISmallSquareServicePort;
+import retoPragma.Microusuario.domain.spi.IRestaurantPlazoletaFeignPort;
 import retoPragma.Microusuario.infrastructure.output.adapter.UserJpaAdapter;
 import retoPragma.Microusuario.infrastructure.output.adapter.SecurityServiceAdapter;
 import retoPragma.Microusuario.infrastructure.output.mapper.IUserEntityMapper;
@@ -21,7 +21,7 @@ public class BeanConfiguration {
 
     private final IUserRepository usuarioRepository;
     private final IUserEntityMapper usuarioEntityMapper;
-    private final ISmallSquareServicePort plazoletaFeignClient;
+    private final IRestaurantPlazoletaFeignPort plazoletaFeignClient;
 
     @Bean
     public IUserPersistencePort usuarioPersistencePort() {

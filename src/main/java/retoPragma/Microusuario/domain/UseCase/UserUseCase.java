@@ -3,7 +3,7 @@ package retoPragma.Microusuario.domain.UseCase;
 import retoPragma.Microusuario.domain.api.IUserServicePort;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.model.User;
-import retoPragma.Microusuario.domain.spi.ISmallSquareServicePort;
+import retoPragma.Microusuario.domain.spi.IRestaurantPlazoletaFeignPort;
 import retoPragma.Microusuario.domain.spi.ISecurityServicePort;
 import retoPragma.Microusuario.domain.spi.IUserPersistencePort;
 import retoPragma.Microusuario.domain.util.validation.UserValidationUtil;
@@ -21,10 +21,10 @@ public class UserUseCase implements IUserServicePort {
 
     private final IUserPersistencePort userPersistencePort;
     private final ISecurityServicePort securityServicePort;
-    private final ISmallSquareServicePort smallSquareFeignClient;
+    private final IRestaurantPlazoletaFeignPort smallSquareFeignClient;
     private final UserValidationUtil userValidationUtil;
 
-    public UserUseCase(IUserPersistencePort userPersistencePort, ISecurityServicePort securityServicePort, ISmallSquareServicePort smallSquareFeignClient) {
+    public UserUseCase(IUserPersistencePort userPersistencePort, ISecurityServicePort securityServicePort, IRestaurantPlazoletaFeignPort smallSquareFeignClient) {
         this.userPersistencePort = userPersistencePort;
         this.securityServicePort = securityServicePort;
         this.smallSquareFeignClient = smallSquareFeignClient;
@@ -87,7 +87,7 @@ public class UserUseCase implements IUserServicePort {
         if (!ROLE_PROPIETARIO.equals(authority)) {
             throw new UserNoOwnerException();
         }
-        if (smallSquareFeignClient.obtainRestaurantId(employee.getIdRestaurant()) == null) {
+        if (smallSquareFeignClient.getRestaurantId(employee.getIdRestaurant()) == null) {
             throw new NoPermissionCreateException();
         }
         String emailAuthentic = securityServicePort.getAuthenticatedUsername();
@@ -108,4 +108,24 @@ public class UserUseCase implements IUserServicePort {
         }
         userValidationUtil.generalValidation(user);
     }
+
+    @Override
+    public void updateUser(User user) {
+        userPersistencePort.updateUser(user);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return userPersistencePort.findUserById(id);
+    }
+
+    @Override
+    public void assignRestaurantToUser(Long idUser, Long idRestaurant) {
+        userPersistencePort.assignRestaurantToUser(idUser, idRestaurant);
+    }
+    @Override
+    public String obtainNumberPhone(Long id) {
+        return userPersistencePort.obtainNumberPhone(id);
+    }
+
 }

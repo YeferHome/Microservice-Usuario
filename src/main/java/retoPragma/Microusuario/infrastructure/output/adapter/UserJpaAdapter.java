@@ -6,6 +6,8 @@ import retoPragma.Microusuario.domain.model.User;
 import retoPragma.Microusuario.domain.util.exception.DocumentNoExistException;
 import retoPragma.Microusuario.domain.model.RolesPlazoleta;
 import retoPragma.Microusuario.domain.spi.IUserPersistencePort;
+import retoPragma.Microusuario.domain.util.exception.UserNoOwnerException;
+import retoPragma.Microusuario.infrastructure.output.entity.UserEntity;
 import retoPragma.Microusuario.infrastructure.output.mapper.IUserEntityMapper;
 import retoPragma.Microusuario.infrastructure.output.repository.IUserRepository;
 
@@ -43,5 +45,34 @@ public class UserJpaAdapter implements IUserPersistencePort {
         return userRepository.findByRol(rol)
                 .map(userEntityMapper::toUser);
     }
+    @Override
+    public void updateUser(User user) {
+        UserEntity userEntity = userRepository.findById(user.getId())
+                .orElseThrow(() -> new UserNoOwnerException());
 
+        userEntity.setIdRestaurant(user.getIdRestaurant());
+        userRepository.save(userEntity);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(UserNoOwnerException::new);
+        return userEntityMapper.toUser(userEntity);
+    }
+
+    @Override
+    public void assignRestaurantToUser(Long idUser, Long idRestaurant) {
+        UserEntity userEntity = userRepository.findById(idUser)
+                .orElseThrow(() -> new UserNoOwnerException());
+
+        userEntity.setIdRestaurant(idRestaurant);
+        userRepository.save(userEntity);
+    }
+
+    @Override
+    public String obtainNumberPhone(Long id) {
+        return userRepository.findNumberPhoneById(id)
+                .orElseThrow(() -> new UserNoOwnerException());
+    }
 }

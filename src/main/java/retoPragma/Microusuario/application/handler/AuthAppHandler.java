@@ -12,7 +12,6 @@ import retoPragma.Microusuario.domain.model.User;
 import retoPragma.Microusuario.domain.util.exception.PasswordErrorException;
 import retoPragma.Microusuario.infrastructure.configuracion.jwt.JwtService;
 
-
 @Service
 @AllArgsConstructor
 public class AuthAppHandler implements IAuthAppHandler {
@@ -24,7 +23,7 @@ public class AuthAppHandler implements IAuthAppHandler {
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-        User user = userServicePort.findUserByEmail(loginRequestDto.getCorreo());
+        User user = userServicePort.findUserByEmail(loginRequestDto.getEmail());
 
         if (!passwordEncoder.matches(loginRequestDto.getClave(), user.getClave())) {
             throw new PasswordErrorException();

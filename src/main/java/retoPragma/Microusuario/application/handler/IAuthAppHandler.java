@@ -6,7 +6,6 @@ import retoPragma.Microusuario.application.dto.RegisterRequestDto;
 
 public interface IAuthAppHandler {
 
-
     LoginResponseDto login(LoginRequestDto loginRequestDto);
 
     void register(RegisterRequestDto registerRequestDto);

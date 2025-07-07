@@ -11,6 +11,12 @@ public interface IUserPersistencePort {
     String findRolById(Long id);
     User findByEmail(String email);
     Optional<User> findByRol(RolesPlazoleta rol);
+    User findUserById(Long id);
+    void updateUser(User user);
+    String obtainNumberPhone(Long id);
+    void assignRestaurantToUser(Long idUser, Long idRestaurant);
+
+
 
 
 }

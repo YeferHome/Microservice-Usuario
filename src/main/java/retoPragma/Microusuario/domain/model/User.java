@@ -6,7 +6,7 @@ public class User {
 
     private Long id;
     private String name;
-    private String lastname;
+    private String lastName;
     private Long identificationNumber;
     private String numberPhone;
     private LocalDate dateOfBirth;
@@ -19,10 +19,10 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String lastname, Long identificationNumber, String numberPhone, LocalDate dateOfBirth, String email, String clave, RolesPlazoleta rol, Long idRestaurant) {
+    public User(Long id, String name, String lastName, Long identificationNumber, String numberPhone, LocalDate dateOfBirth, String email, String clave, RolesPlazoleta rol, Long idRestaurant) {
         this.id = id;
         this.name = name;
-        this.lastname = lastname;
+        this.lastName = lastName;
         this.identificationNumber = identificationNumber;
         this.numberPhone = numberPhone;
         this.dateOfBirth = dateOfBirth;
@@ -49,11 +49,11 @@ public class User {
     }
 
     public String getLastName() {
-        return lastname;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        this.lastname = lastName;
+        this.lastName = lastName;
     }
 
     public Long getIdentificationNumber() {

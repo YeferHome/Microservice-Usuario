@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class UserAppRequestDto {
     private Long id;
     private String name;
-    private String lastname;
+    private String lastName;
     private Long identificationNumber;
     private String numberPhone;
     private LocalDate dateOfBirth;

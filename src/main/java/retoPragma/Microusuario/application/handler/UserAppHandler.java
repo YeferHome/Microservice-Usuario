@@ -38,6 +38,15 @@ public class UserAppHandler implements IUserAppHandler {
         return userServicePort.findRolById(id);
     }
 
-
+    @Override
+    public void assignRestaurantToUser(Long userId, Long restaurantId) {
+        User user = userServicePort.findUserById(userId);
+        user.setIdRestaurant(restaurantId);
+        userServicePort.updateUser(user);
+    }
+    @Override
+    public String obtainNumberPhone(Long id) {
+        return userServicePort.obtainNumberPhone(id);
+    }
 }
 

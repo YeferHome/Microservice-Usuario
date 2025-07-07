@@ -43,7 +43,7 @@ class AuthAppHandlerTest {
 
     @Test
     void login_ValidCredentials_ReturnsJwtToken() {
-        // Arrange
+
         LoginRequestDto loginRequest = new LoginRequestDto();
         loginRequest.setCorreo("juan@example.com");
         loginRequest.setClave("plainPassword");
@@ -56,17 +56,15 @@ class AuthAppHandlerTest {
         when(passwordEncoder.matches("plainPassword", "encodedPassword")).thenReturn(true);
         when(jwtService.generate(user)).thenReturn("mocked-jwt");
 
-        // Act
         LoginResponseDto response = authAppHandler.login(loginRequest);
 
-        // Assert
         assertNotNull(response);
         assertEquals("mocked-jwt", response.getToken());
     }
 
     @Test
     void login_InvalidPassword_ThrowsPasswordErrorException() {
-        // Arrange
+
         LoginRequestDto loginRequest = new LoginRequestDto();
         loginRequest.setCorreo("juan@example.com");
         loginRequest.setClave("wrongPassword");
@@ -78,13 +76,12 @@ class AuthAppHandlerTest {
         when(usuarioServicePort.findUserByEmail("juan@example.com")).thenReturn(user);
         when(passwordEncoder.matches("wrongPassword", "correctEncodedPassword")).thenReturn(false);
 
-        // Act & Assert
         assertThrows(PasswordErrorException.class, () -> authAppHandler.login(loginRequest));
     }
 
     @Test
     void register_ValidData_SavesUsuario() {
-        // Arrange
+
         RegisterRequestDto registerRequest = new RegisterRequestDto();
         registerRequest.setNombre("Juan");
         registerRequest.setApellido("Pérez");
@@ -98,10 +95,8 @@ class AuthAppHandlerTest {
         User user = new User();
         when(usuarioAppRequestMapper.toRegister(registerRequest)).thenReturn(user);
 
-        // Act
         authAppHandler.register(registerRequest);
 
-        // Assert
         verify(usuarioAppRequestMapper).toRegister(registerRequest);
         verify(usuarioServicePort).saveRegister(user);
     }

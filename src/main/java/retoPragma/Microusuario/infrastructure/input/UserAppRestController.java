@@ -33,7 +33,7 @@ public class UserAppRestController {
 
     })
     @PostMapping("/saveAdmin")
-    public ResponseEntity<Void> saveUserInUserApp(@RequestBody UserAppRequestDto userAppRequestDto){
+    public ResponseEntity<Void> saveUserInUserApp(@RequestBody UserAppRequestDto userAppRequestDto) {
         userAppHandler.saveUserInUserApp(userAppRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -51,10 +51,11 @@ public class UserAppRestController {
     })
 
     @PostMapping("/saveOwner")
-    public ResponseEntity<Void> saveOwnerInUserApp(@RequestBody UserAppRequestDto userAppRequestDto){
+    public ResponseEntity<Void> saveOwnerInUserApp(@RequestBody UserAppRequestDto userAppRequestDto) {
         userAppHandler.saveOwnerInUserApp(userAppRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
     @Operation(summary = "Crear Empleado en la base de datos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Empleado creado con exito",
@@ -67,14 +68,34 @@ public class UserAppRestController {
 
     })
     @PostMapping("/saveEmployee")
-    public ResponseEntity<Void> saveEmployeeInUserApp(@RequestBody UserAppRequestDto userAppRequestDto){
+    public ResponseEntity<Void> saveEmployeeInUserApp(@RequestBody UserAppRequestDto userAppRequestDto) {
         userAppHandler.saveEmployeeInUserApp(userAppRequestDto);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "Obtener el rol de un usuario por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol encontrado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
+    })
     @GetMapping("/{id}/rol")
-    String obtainRolUser(@PathVariable("id") Long id){
+    public String obtainRolUser(@PathVariable("id") Long id) {
         return userAppHandler.findRolById(id);
     }
 
+    @PutMapping("/update/{userId}/restaurant/{restaurantId}")
+    public ResponseEntity<Void> assignRestaurantToUser(@PathVariable Long userId, @PathVariable Long restaurantId) {
+        userAppHandler.assignRestaurantToUser(userId, restaurantId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/users/{id}/numberPhone")
+    public ResponseEntity<String> obtainNumberPhone(@PathVariable Long id) {
+        String numberPhone = userAppHandler.obtainNumberPhone(id);
+        return ResponseEntity.ok(numberPhone);
+    }
 }

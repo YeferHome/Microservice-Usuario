@@ -1,6 +1,6 @@
 package retoPragma.Microusuario.domain.util.validation;
 
-import retoPragma.Microusuario.domain.spi.ISmallSquareServicePort;
+import retoPragma.Microusuario.domain.spi.IRestaurantPlazoletaFeignPort;
 import retoPragma.Microusuario.domain.util.exception.AgeException;
 import retoPragma.Microusuario.domain.util.exception.CorreoInvadedException;
 import retoPragma.Microusuario.domain.util.exception.DocumentException;
@@ -22,10 +22,10 @@ public class UserValidationUtil {
 
     private final ISecurityServicePort securityServicePort;
     private final IUserPersistencePort userPersistencePort;
-    private final ISmallSquareServicePort smallSquareFeignClient;
+    private final IRestaurantPlazoletaFeignPort smallSquareFeignClient;
 
 
-    public UserValidationUtil(ISecurityServicePort securityServicePort, IUserPersistencePort userPersistencePort, ISmallSquareServicePort smallSquareFeignClient) {
+    public UserValidationUtil(ISecurityServicePort securityServicePort, IUserPersistencePort userPersistencePort, IRestaurantPlazoletaFeignPort smallSquareFeignClient) {
         this.securityServicePort = securityServicePort;
         this.userPersistencePort = userPersistencePort;
         this.smallSquareFeignClient = smallSquareFeignClient;
@@ -44,7 +44,6 @@ public class UserValidationUtil {
     public boolean isFirstAdmin() {
         return userPersistencePort.findByRol(ADMINISTRADOR).isEmpty();
     }
-
 
     public void generalValidation(User user) {
         if (!emailValidate(user.getEmail())) {

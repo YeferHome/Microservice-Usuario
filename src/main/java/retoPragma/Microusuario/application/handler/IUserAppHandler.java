@@ -8,5 +8,7 @@ public interface IUserAppHandler {
     void saveOwnerInUserApp(UserAppRequestDto userAppRequestDto);
     void saveEmployeeInUserApp(UserAppRequestDto userAppRequestDto);
     String findRolById(Long id);
+    String obtainNumberPhone(Long id);
+    void assignRestaurantToUser(Long userId, Long restaurantId);
 
 }

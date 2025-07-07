@@ -2,18 +2,17 @@ package retoPragma.Microusuario.infrastructure.output.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import retoPragma.Microusuario.domain.spi.ISmallSquareServicePort;
+import retoPragma.Microusuario.domain.spi.IRestaurantPlazoletaFeignPort;
 import retoPragma.Microusuario.infrastructure.input.Client.PlazoletaFeignClient;
 
 @Component
 @RequiredArgsConstructor
-public class SmallSquareServiceAdapter implements ISmallSquareServicePort {
+public class RestaurantPlazoletaFeignAdapter implements IRestaurantPlazoletaFeignPort {
 
     private final PlazoletaFeignClient plazoletaFeignClient;
 
-
     @Override
-    public Long obtainRestaurantId(Long idRestaurant) {
-        return plazoletaFeignClient.obtenerRestaurateId(idRestaurant);
+    public Long getRestaurantId(Long id) {
+        return plazoletaFeignClient.getRestaurantId(id).getId();
     }
 }
